@@ -1,0 +1,7 @@
+﻿  pch.cpp
+  CardReader.cpp
+f:\vcworspace\cardreader\cardreader\cardreader.cpp(97): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\vcworspace\cardreader\cardreader\cardreader.cpp(124): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\vcworspace\cardreader\cardreader\cardreader.cpp(156): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+  CardReader.vcxproj -> F:\vcworspace\CardReader\Debug\CardReader.exe
+  CardReader.vcxproj -> F:\vcworspace\CardReader\Debug\CardReader.pdb (Full PDB)

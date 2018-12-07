@@ -1,0 +1,6 @@
+﻿  pch.cpp
+  CardReader.cpp
+f:\vcworspace\cardreader\cardreader\cardreader.cpp(13): warning C4311: 'type cast': pointer truncation from 'HANDLE' to 'int'
+f:\vcworspace\cardreader\cardreader\cardreader.cpp(13): warning C4302: 'type cast': truncation from 'HANDLE' to 'int'
+f:\vcworspace\cardreader\cardreader\cardreader.cpp(22): warning C4312: 'type cast': conversion from 'int' to 'HANDLE' of greater size
+x64\Debug\CardReader.obj : fatal error LNK1112: module machine type 'x64' conflicts with target machine type 'X86'

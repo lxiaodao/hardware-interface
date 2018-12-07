@@ -1,0 +1,13 @@
+﻿  stdafx.cpp
+  webserver.cpp
+  webs.cpp
+  UrlHelper.cpp
+  stdHelpers.cpp
+  Socket.cpp
+  IDCardReader.cpp
+  base64.cpp
+f:\vcworspace\webs\webs\base64.cpp(99): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+f:\vcworspace\webs\webs\base64.cpp(113): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+  Generating Code...
+  webs.vcxproj -> F:\vcworspace\webs\Debug\webs.exe
+  webs.vcxproj -> F:\vcworspace\webs\Debug\webs.pdb (Full PDB)
