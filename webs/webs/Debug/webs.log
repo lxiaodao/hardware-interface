@@ -4,10 +4,15 @@
   UrlHelper.cpp
   stdHelpers.cpp
   Socket.cpp
-  IDCardReader.cpp
+  MemberCardReader.cpp
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(44): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(71): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(95): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(102): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(91): warning C4101: 'hotelno': unreferenced local variable
   base64.cpp
-f:\vcworspace\webs\webs\base64.cpp(99): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
-f:\vcworspace\webs\webs\base64.cpp(113): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\base64.cpp(99): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\base64.cpp(113): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
   Generating Code...
-  webs.vcxproj -> F:\vcworspace\webs\Debug\webs.exe
-  webs.vcxproj -> F:\vcworspace\webs\Debug\webs.pdb (Full PDB)
+  webs.vcxproj -> F:\business\hardware-interface\webs\Debug\webs.exe
+  webs.vcxproj -> F:\business\hardware-interface\webs\Debug\webs.pdb (Full PDB)
