@@ -48,6 +48,12 @@
     <ClInclude Include="MemberCardReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Sdtapi.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDCardReader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,6 +78,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MemberCardReader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IDCardReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

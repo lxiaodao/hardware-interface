@@ -1,4 +1,4 @@
-
+﻿
 #pragma once
 #include <string>
 #include <stringapiset.h>
@@ -235,4 +235,5 @@ public:
 		WideStrToUtf8Str(wide_string, utf8_string);
 		return utf8_string;
 	};
+	
 };

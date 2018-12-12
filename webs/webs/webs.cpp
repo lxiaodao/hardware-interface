@@ -9,6 +9,7 @@
 
 #include <string>
 #include "mwrf32.h"
+#include "IDCardReader.h"
 using namespace std;
 
 
@@ -28,27 +29,38 @@ void Json_Request_Handler(webserver::http_request* r) {
 		body = "<h1>Welcome to Rene's Web Server</h1>"
 			"I wonder what you're going to click" + links;
 	}
-	else if (r->path_ == "/readMCard") {
-		
+	else if (r->path_ == "/writeMCard") {
+
 		for (std::map<std::string, std::string>::const_iterator i = r->params_.begin();
 			i != r->params_.end();
 			i++) {
-       
-	       //读取请求参数
-		
+
+			//读取请求参数
+			//TODO:赋值
+
 		}
 		//string arr[] = { "H201810000012","20181000000001" };
 		unsigned char data[32] = "";
-		MemberCardReader::excuteReadWriteAction(data, 0);
-		/*
-
-		*/
+		int ret=MemberCardReader::excuteReadWriteAction(data, 1);
+	
 		//body += "<br>" + i->first + " = " + i->second;
 		string str = string((char*)data);
+		//TODO:返回格式{"hotelNo":"H201810000012","memberNo":"20181000000001"}
+		body += "contentis:" + str;
+
+	}
+	else if (r->path_ == "/readMCard") {
+		
+		
+		//string arr[] = { "H201810000012","20181000000001" };
+		unsigned char data[32] = "";
+		MemberCardReader::excuteReadWriteAction(data, 0);
+		
+		string str = string((char*)data);
+		//TODO:返回格式{"hotelNo":"H201810000012","memberNo":"20181000000001"}
 		body += "contentis:" + str;
 		
-	}
-	
+	}	
 	else if (r->path_ == "/auth") {
 		if (r->authentication_given_) {
 			if (r->username_ == "rene" && r->password_ == "secretGarden") {
@@ -63,15 +75,12 @@ void Json_Request_Handler(webserver::http_request* r) {
 			r->auth_realm_ = "Private Stuff";
 		}
 	}
-	else if (r->path_ == "/header") {
-		title = "some HTTP header details";
-		body = std::string("<table>") +
-			"<tr><td>Accept:</td><td>" + r->accept_ + "</td></tr>" +
-			"<tr><td>Accept-Encoding:</td><td>" + r->accept_encoding_ + "</td></tr>" +
-			"<tr><td>Accept-Language:</td><td>" + r->accept_language_ + "</td></tr>" +
-			"<tr><td>User-Agent:</td><td>" + r->user_agent_ + "</td></tr>" +
-			"</table>" +
-			links;
+	else if (r->path_ == "/readIDCard") {
+		unsigned char json_data[1000] = "";
+		IDCardReader::readIdCardData(json_data);
+		string result = string((char*)json_data);
+		body += result;
+		
 	}
 	else {
 		r->status_ = "404 Not Found";

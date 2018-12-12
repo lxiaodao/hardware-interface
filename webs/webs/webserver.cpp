@@ -118,7 +118,7 @@ unsigned webserver::Request(void* ptr_s) {
   request_func_(&req);
 
   std::stringstream str_str;
-  str_str << req.answer_.size();
+  str_str << req.answer_.size();//暂时不用
 
   time_t ltime;
   time(&ltime);
@@ -138,18 +138,23 @@ unsigned webserver::Request(void* ptr_s) {
     s.SendLine("\"");
   }
   else {
-    //s.SendLine(req.status_);
-	s.SendLine(EncodingConverter::ToUtf8String(req.answer_));
+    s.SendLine(req.status_);
+	
   }
   s.SendLine(std::string("Date: ") + asctime_remove_nl + " GMT");
-  s.SendLine(std::string("Server: ") +serverName);
-  s.SendLine("Connection: close");
+  //s.SendLine(std::string("Server: ") +serverName);
+  //s.SendLine("Connection: close");
   s.SendLine("Content-Type: application/json; charset=UTF-8");
-  s.SendLine("Content-Length: " + str_str.str());
+  //s.SendLine("Content-Length: " + str_str.str());//不需要限制
   s.SendLine("");
   //s.SendLine(req.answer_);
-  s.SendLine(EncodingConverter::ToUtf8String(req.answer_));
 
+  std::cout << "-------req.answer_ is-------" << req.answer_ ;
+  std::cout << "-------req.answer_ length -------" << req.answer_.length();
+  std::string backresult = EncodingConverter::ToUtf8String(req.answer_);
+  s.sendALL(backresult);
+ 
+  
   s.Close();
 
   

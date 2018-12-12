@@ -1,4 +1,4 @@
-/* 
+﻿/* 
    Socket.h
 
    Copyright (C) 2002-2017 René Nyffenegger
@@ -53,6 +53,8 @@ public:
   // because SendBytes does not modify the std::string passed 
   // (in contrast to SendLine).
   void   SendBytes(const std::string&);
+
+  int sendALL(const std::string& content);
 
 protected:
   friend class SocketServer;

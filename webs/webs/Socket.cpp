@@ -154,7 +154,43 @@ void Socket::SendLine(std::string s) {
 }
 
 void Socket::SendBytes(const std::string& s) {
-  send(s_,s.c_str(),s.length(),0);
+	SO_SNDBUF;
+	send(s_, s.c_str(), s.length(), 0);
+}
+int Socket::sendALL(const std::string& content)
+{
+	const char *buf = content.c_str();
+	int alllen= content.length();
+	int num_left = content.length();
+	int num_sent;//已经输出
+	int err = 0;
+	const char *cp = buf;
+
+	while (num_left > 0)
+	{
+		num_sent = send(s_, cp, num_left, 0);
+
+		if (num_sent < 0)
+		{
+			err = SOCKET_ERROR;
+			break;
+		}
+
+		//assert(num_sent <= num_left);
+		if (num_sent <= num_left) {
+			num_left -= num_sent;
+			cp += num_sent;
+		}
+		else {
+			num_left -= num_sent;
+			std::cout << "-------Shoud num_left -------"<< num_left;
+			std::cout << "-------Shoud send content -------\r\n";
+		}
+
+		
+	}
+
+	return (err == SOCKET_ERROR ? SOCKET_ERROR : alllen);
 }
 
 SocketServer::SocketServer(int port, int connections, TypeSocket type) {

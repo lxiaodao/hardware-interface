@@ -1,0 +1,24 @@
+1.二代身份证读取接口
+  请求参数：无
+  请求地址：http://192.168.10.107:9020/readIDCard
+  返回结果：
+  {"name":"杨康","gender":"男","folk":"汉","birthDay":"19800512","code":"210521198005122898","address":"南京市崇文区法华寺南里25楼","agency":"某某崇文分局","expireStart":"20140808","expireEnd":"20340808"}
+
+
+2.MW会员卡读取数据接口
+  
+   请求参数：无
+    请求地址：http://192.168.10.107:9020/readMCard
+    返回结果：
+     {"hotelNo":"H201810000012","memberNo":"20181000000001"}
+
+3.MW会员卡写入数据接口
+
+  （目前不支持POST）
+  	                 <tr><td>酒店编码</td><td><input name="hotelNo" ></td></tr>  必须唯一
+			<tr><td>会员编号</td><td><input name="memberNo" ></td></tr>  必须唯一
+			
+  GET请求参数：hotelNo=H201810000012&memberNo=20181000000001
+   请求地址：http://192.168.10.107:9020/writeMCard
+  返回结果：
+  {"hotelNo":"H201810000012","memberNo":"20181000000001"}
