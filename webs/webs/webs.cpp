@@ -10,6 +10,7 @@
 #include <string>
 #include "mwrf32.h"
 #include "IDCardReader.h"
+#include "FileReader.h"
 using namespace std;
 
 
@@ -30,6 +31,10 @@ void Json_Request_Handler(webserver::http_request* r) {
 			"I wonder what you're going to click" + links;
 	}
 	else if (r->path_ == "/writeMCard") {
+		//hotelNo=H201810000012&memberNo=20181000000001&cardNo=30089000
+		string hotelNo="";
+		string memberNo = "";
+		string cardNo = "";
 
 		for (std::map<std::string, std::string>::const_iterator i = r->params_.begin();
 			i != r->params_.end();
@@ -37,28 +42,43 @@ void Json_Request_Handler(webserver::http_request* r) {
 
 			//读取请求参数
 			//TODO:赋值
+			string name=i->first;
+			if (name == "hotelNo") {
+				hotelNo = i->second;
+			}
+			else if (name == "memberNo") {
+				memberNo = i->second;
+			}
+			else if (name == "cardNo") {
+				cardNo = i->second;
+			}
 
 		}
-		//string arr[] = { "H201810000012","20181000000001" };
-		unsigned char data[32] = "";
-		int ret=MemberCardReader::excuteReadWriteAction(data, 1);
-	
-		//body += "<br>" + i->first + " = " + i->second;
-		string str = string((char*)data);
-		//TODO:返回格式{"hotelNo":"H201810000012","memberNo":"20181000000001"}
-		body += "contentis:" + str;
+		boolean isAllInvalidParam = hotelNo == ""&&memberNo == ""&&cardNo == "";
+		if (!isAllInvalidParam) {
+			//参数都为空，非法			
+			unsigned char data[120] = "";
+			string dataArray[] = { hotelNo, memberNo,cardNo };
+			int ret = MemberCardReader::excuteWriteAction(dataArray, data);
+			string backjson_or_msg = string((char*)data);
+			//返回格式{"hotelNo":"H201810000012","memberNo":"20181000000001","cardNo":"30089000"}
+			body += backjson_or_msg;
+		}
+		else {
+			body += "请求参数非法！";
+		}
+		
+		
 
 	}
 	else if (r->path_ == "/readMCard") {
 		
+		unsigned char data[120] = "";
+		MemberCardReader::excuteReadWriteAction(data, 0);//读操作
 		
-		//string arr[] = { "H201810000012","20181000000001" };
-		unsigned char data[32] = "";
-		MemberCardReader::excuteReadWriteAction(data, 0);
-		
-		string str = string((char*)data);
-		//TODO:返回格式{"hotelNo":"H201810000012","memberNo":"20181000000001"}
-		body += "contentis:" + str;
+		string backjson_or_msg = string((char*)data);
+		//返回格式{"hotelNo":"H201810000012","memberNo":"20181000000001","cardNo":"30089000"}
+		body += backjson_or_msg;
 		
 	}	
 	else if (r->path_ == "/auth") {
@@ -95,7 +115,8 @@ void Json_Request_Handler(webserver::http_request* r) {
 }
 
 int main() {
-	webserver(9020, Json_Request_Handler);
+	unsigned int port_ = FileReader::getServerPort();//add by ly 2018-12-13
+	webserver(port_, Json_Request_Handler);
 }
 
 

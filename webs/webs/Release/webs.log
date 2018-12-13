@@ -2,20 +2,21 @@
   base64.cpp
 base64.cpp(99): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
 base64.cpp(113): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
+  FileReader.cpp
   IDCardReader.cpp
   MemberCardReader.cpp
-MemberCardReader.cpp(44): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
-MemberCardReader.cpp(71): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
-MemberCardReader.cpp(95): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+MemberCardReader.cpp(47): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+MemberCardReader.cpp(82): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
 MemberCardReader.cpp(102): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
-MemberCardReader.cpp(91): warning C4101: 'hotelno': unreferenced local variable
+MemberCardReader.cpp(141): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+MemberCardReader.cpp(175): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
   Socket.cpp
   stdHelpers.cpp
   UrlHelper.cpp
   webs.cpp
   webserver.cpp
   Generating code
-  All 474 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  All 553 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   webs.vcxproj -> F:\business\hardware-interface\webs\Release\webs.exe
   webs.vcxproj -> F:\business\hardware-interface\webs\Release\webs.pdb (Full PDB)

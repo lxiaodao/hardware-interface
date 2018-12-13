@@ -1,17 +1,18 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 
 #include <windows.h>
 #include "MemberCardReader.h"
 #include <iostream>
 #include "mwrf32.h"
 #include <string>
+#include "StringUtil.h"
 using namespace std;
 
-int MemberCardReader::isConnected = 0;//0£¬Ã»ÓĞ£»1£¬ok
+int MemberCardReader::isConnected = 0;//0ï¼Œæ²¡æœ‰ï¼›1ï¼Œok
 HANDLE MemberCardReader::icdev = 0;
 int MemberCardReader::connectHardware()
 {
-	// ³õÊ¼»¯
+	// åˆå§‹åŒ–
 	//int icdev = (int)rf_init(1000, 1000);//115200
 	if (MemberCardReader::isConnected == 1) {
 		return 0;
@@ -20,15 +21,107 @@ int MemberCardReader::connectHardware()
 	unsigned char ver[20];
 	int status = rf_get_status(icdev, ver);
 	if (status != 0) {
-		std::cout << "³õÊ¼»¯Á¬½Ó¶Á¿¨Æ÷Ó²¼şÊ§°ÜCard Reader init failed!" << "\r\n";
+		std::cout << "åˆå§‹åŒ–è¿æ¥è¯»å¡å™¨ç¡¬ä»¶å¤±è´¥Card Reader init failed!" << "\r\n";
 		return -1;
 	}
 	else {
-		std::cout << "------³õÊ¼»¯Á¬½Ó¶Á¿¨Æ÷Ó²¼ş³É¹¦Card Reader init SUCCESS------" << ver << "!\n";
+		std::cout << "------åˆå§‹åŒ–è¿æ¥è¯»å¡å™¨ç¡¬ä»¶æˆåŠŸCard Reader init SUCCESS------" << ver << "!\n";
 	}
 
 	rf_beep(icdev, (short)10);
-	MemberCardReader::isConnected = 1;//³õÊ¼»¯
+	MemberCardReader::isConnected = 1;//åˆå§‹åŒ–
+	return 0;
+}
+
+int MemberCardReader::excuteWriteAction(string * array, unsigned char * data)
+{   
+	if (MemberCardReader::connectHardware() != 0) {
+
+		strcat((char *)data, "åˆå§‹åŒ–è¿æ¥è¯»å¡å™¨ç¡¬ä»¶å¤±è´¥");
+		return -1;
+	}
+
+	unsigned char key[6] = { (byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff };
+	for (short i = 1; i<2; i++) {
+
+		int flag = rf_load_key(icdev, (short)0, i, key);
+		if (flag != 0)
+		{
+			std::cout << "------------------------åŠ è½½æ‰‡åŒºå¯†ç å¤±è´¥-------------------------" << i << "\r\n";
+			
+			strcat((char *)data, "åŠ è½½æ‰‡åŒº1å¯†ç å¤±è´¥!");
+			return -1;
+		}
+		else {
+			std::cout << "------------------------OKï¼ŒåŠ è½½æ‰‡åŒºå¯†ç æˆåŠŸ-------------------------" << i << " " << key << "\r\n";
+		}
+	}
+
+	//å¯»å¡
+
+	int st;
+	/**
+	æ³¨ æ„ï¼šé€‰ç”¨ IDLE
+	æ¨¡å¼å¯»å¡æ—¶ï¼Œå®Œæˆå¯¹å¡ç‰‡çš„æ“ä½œåè°ƒç”¨ rf_halt å‡½æ•°æ¥åœæ­¢æ“ä½œ ï¼Œ æ­¤ åè¯»å†™å™¨ä¸èƒ½æ‰¾åˆ°å¡ç‰‡ï¼Œé™¤é
+	å¡ç‰‡ç¦»å¼€æ“ä½œåŒºåŸŸå¹¶å†æ¬¡é‡æ–°è¿›å…¥ã€‚
+	é€‰ç”¨ ALL æ¨¡å¼å¯»å¡æ—¶ï¼Œå®Œæˆå¯¹å¡ç‰‡çš„æ“ä½œåè°ƒç”¨ rf_halt å‡½æ•°æ¥åœæ­¢æ“ä½œ ï¼Œ æ­¤åè¯»å†™å™¨ä»èƒ½æ‰¾
+	åˆ°è¯¥å¡ç‰‡ï¼Œæ— é¡»ç¦»å¼€æ“ä½œåŒºåŸŸå¹¶å†æ¬¡é‡æ–°è¿›å…¥
+	*/
+	unsigned long noofcard = 0;
+	st = rf_card(icdev, (short)0, &noofcard);  //IDLEæ¨¡å¼æ“ä½œï¼Œå•å¡æ“ä½œ
+	if (st == 0) {
+		std::cout << "------------------------å¯»å¡æˆåŠŸ-------------------------" << "\r\n";
+	}
+	else {
+		std::cout << "------------------------IDLEæ¨¡å¼å¯»å¡å¤±è´¥!-------------------------" << "\r\n";
+		strcat((char *)data, "IDLEæ¨¡å¼å¯»å¡å¤±è´¥!");
+		return -1;
+	}
+	//éªŒè¯
+	short sector = 1; //æ‰‡åŒº1
+	st = rf_authentication(icdev, (short)0, sector);
+	if (st != 0)
+	{
+
+		std::cout << "------------------------æ‰‡åŒº1å¯†ç éªŒè¯é”™è¯¯!-------------------------" << sector << "\r\n";
+		strcat((char *)data, "æ‰‡åŒº1å¯†ç éªŒè¯é”™è¯¯!");
+		return -1;
+	}
+	else {
+		std::cout << "------------------------OK,æ‰‡åŒºå¯†ç éªŒè¯æˆåŠŸ!-------------------------" << sector << "\r\n";
+	}
+	//å†™æ“ä½œ
+	//å†™ç¬¬4ï¼Œ5ï¼Œ6å—æ•°æ®
+	//boolean flag_array[3] = {true,true,true};
+	//string msg[3];
+	for (int i = 4; i < 7; i++) {
+	
+		
+		unsigned char *conbuf = (unsigned char *)array[i - 4].c_str();
+		
+		int ret=write_content(icdev, (short)i, conbuf);
+		if (ret != 0) {
+			//è¦ä¹ˆå…¨æˆåŠŸï¼Œè¦ä¹ˆå…¨å¤±è´¥ã€‚å†™å…¥å¤±è´¥
+			
+			strcpy((char*)data, (char*)conbuf);
+			return -1;
+		}
+	}
+	
+	string backjson = "{\"hotelNo\":\":hotelNo\",\"memberNo\":\":memberNo\",\"cardNo\":\":cardNo\"}";
+	StringUtil::string_replaceAll(backjson,":hotelNo", array[0]);
+	StringUtil::string_replaceAll(backjson, ":memberNo", array[1]);
+	StringUtil::string_replaceAll(backjson, ":cardNo", array[2]);
+
+	strcpy((char*)data, backjson.c_str());
+
+	rf_beep(icdev, (short)10);//é¸£ç¬›ï¼Œå†™å…¥æˆåŠŸ
+
+	Sleep(100); //åœç•™100è±ªç§’ 
+
+	rf_halt(icdev); //ç»“æŸå¡çš„æ“ä½œ
+	std::cout << "------------------------ç»“æŸå¡çš„æ“ä½œ-------------------------" << icdev << "\r\n";
+
 	return 0;
 }
 
@@ -36,7 +129,11 @@ int MemberCardReader::excuteReadWriteAction(unsigned char *needwrite,int flag )
 {
 	
 	
-    MemberCardReader::connectHardware();
+	if (MemberCardReader::connectHardware() != 0) {
+
+		strcat((char *)needwrite, "åˆå§‹åŒ–è¿æ¥è¯»å¡å™¨ç¡¬ä»¶å¤±è´¥");
+		return -1;
+	}
 	
 	unsigned char key[6] = { (byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff,(byte)0xff };
 	for (short i = 1; i<2; i++) {
@@ -44,76 +141,95 @@ int MemberCardReader::excuteReadWriteAction(unsigned char *needwrite,int flag )
 		int flag = rf_load_key(icdev, (short)0, i, key);
 		if (flag != 0)
 		{
-			std::cout << "------------------------¼ÓÔØÉÈÇøÃÜÂëÊ§°Ü-------------------------" << i << "\r\n";
+			std::cout << "------------------------åŠ è½½æ‰‡åŒºå¯†ç å¤±è´¥-------------------------" << i << "\r\n";
+			strcat((char *)needwrite, "åŠ è½½æ‰‡åŒº1å¯†ç å¤±è´¥!");
+			return -1;
 		}
 		else {
-			std::cout << "------------------------OK£¬¼ÓÔØÉÈÇøÃÜÂë³É¹¦-------------------------" << i << " " << key << "\r\n";
+			std::cout << "------------------------OKï¼ŒåŠ è½½æ‰‡åŒºå¯†ç æˆåŠŸ-------------------------" << i << " " << key << "\r\n";
 		}
 	}
 
-	//Ñ°¿¨
+	//å¯»å¡
 
 	int st;
 	/**
-	×¢ Òâ£ºÑ¡ÓÃ IDLE
-	Ä£Ê½Ñ°¿¨Ê±£¬Íê³É¶Ô¿¨Æ¬µÄ²Ù×÷ºóµ÷ÓÃ rf_halt º¯ÊıÀ´Í£Ö¹²Ù×÷ £¬ ´Ë ºó¶ÁĞ´Æ÷²»ÄÜÕÒµ½¿¨Æ¬£¬³ı·Ç
-	¿¨Æ¬Àë¿ª²Ù×÷ÇøÓò²¢ÔÙ´ÎÖØĞÂ½øÈë¡£
-	Ñ¡ÓÃ ALL Ä£Ê½Ñ°¿¨Ê±£¬Íê³É¶Ô¿¨Æ¬µÄ²Ù×÷ºóµ÷ÓÃ rf_halt º¯ÊıÀ´Í£Ö¹²Ù×÷ £¬ ´Ëºó¶ÁĞ´Æ÷ÈÔÄÜÕÒ
-	µ½¸Ã¿¨Æ¬£¬ÎŞĞëÀë¿ª²Ù×÷ÇøÓò²¢ÔÙ´ÎÖØĞÂ½øÈë
+	æ³¨ æ„ï¼šé€‰ç”¨ IDLE
+	æ¨¡å¼å¯»å¡æ—¶ï¼Œå®Œæˆå¯¹å¡ç‰‡çš„æ“ä½œåè°ƒç”¨ rf_halt å‡½æ•°æ¥åœæ­¢æ“ä½œ ï¼Œ æ­¤ åè¯»å†™å™¨ä¸èƒ½æ‰¾åˆ°å¡ç‰‡ï¼Œé™¤é
+	å¡ç‰‡ç¦»å¼€æ“ä½œåŒºåŸŸå¹¶å†æ¬¡é‡æ–°è¿›å…¥ã€‚
+	é€‰ç”¨ ALL æ¨¡å¼å¯»å¡æ—¶ï¼Œå®Œæˆå¯¹å¡ç‰‡çš„æ“ä½œåè°ƒç”¨ rf_halt å‡½æ•°æ¥åœæ­¢æ“ä½œ ï¼Œ æ­¤åè¯»å†™å™¨ä»èƒ½æ‰¾
+	åˆ°è¯¥å¡ç‰‡ï¼Œæ— é¡»ç¦»å¼€æ“ä½œåŒºåŸŸå¹¶å†æ¬¡é‡æ–°è¿›å…¥
 	*/
 	unsigned long noofcard = 0;
-	st = rf_card(icdev, (short)0, &noofcard);  //IDLEÄ£Ê½²Ù×÷£¬µ¥¿¨²Ù×÷
+	st = rf_card(icdev, (short)0, &noofcard);  //IDLEæ¨¡å¼æ“ä½œï¼Œå•å¡æ“ä½œ
 	if (st == 0) {
-		std::cout << "------------------------Ñ°¿¨³É¹¦-------------------------" << "\r\n";
+		std::cout << "------------------------å¯»å¡æˆåŠŸ-------------------------" << "\r\n";
 	}
-	//ÑéÖ¤
-	short sector = 1; //ÉÈÇø1
+	else {
+		std::cout << "------------------------IDLEæ¨¡å¼å¯»å¡å¤±è´¥!-------------------------" << "\r\n";
+		strcat((char *)needwrite, "IDLEæ¨¡å¼å¯»å¡å¤±è´¥!");
+		return -1;
+	}
+	//éªŒè¯
+	short sector = 1; //æ‰‡åŒº1
 	st = rf_authentication(icdev, (short)0, sector);
 	if (st != 0)
 	{
 
-		std::cout << "------------------------ÉÈÇøÃÜÂëÑéÖ¤ ´íÎó!-------------------------" << sector << "\r\n";
+		std::cout << "------------------------æ‰‡åŒºå¯†ç éªŒè¯é”™è¯¯!-------------------------" << sector << "\r\n";
+		strcat((char *)needwrite, "æ‰‡åŒº1å¯†ç éªŒè¯é”™è¯¯!");
+		return -1;
 	}
 	else {
-		std::cout << "------------------------OK,ÉÈÇøÃÜÂëÑéÖ¤³É¹¦!-------------------------" << sector << "\r\n";
+		std::cout << "------------------------OK,æ‰‡åŒºå¯†ç éªŒè¯æˆåŠŸ!-------------------------" << sector << "\r\n";
 	}
 
 
 
-	// Ôö¼Ó¶ÁĞ´¿¨Æ¬ÄÚÈİµÄ²¿·Ö
+	// å¢åŠ è¯»å†™å¡ç‰‡å†…å®¹çš„éƒ¨åˆ†
 
-	//¼õÉÙ²Ù×÷¿¨µÄÊ±¼ä£¬Ö»±£´æÁ½ÖÖÊı¾İ¡£¾Æµêid±£´æ,cardno±£´æ£¬¼õÉÙÊı¾İµÄĞ´Èë
-	//·µ»ØÊı¾İ¸ñÊ½"{\"hotelNo\":\"H201810000012\",\"cardNo\":\"20181000000001\"}"
+	//å‡å°‘æ“ä½œå¡çš„æ—¶é—´ï¼Œåªä¿å­˜ä¸‰ç§æ•°æ®ã€‚é…’åº—idä¿å­˜,memberNoä¿å­˜ï¼Œcardnoä¿å­˜ï¼Œå‡å°‘æ•°æ®çš„å†™å…¥
+	//è¿”å›æ•°æ®æ ¼å¼
+	string backjson = "{\"hotelNo\":\":hotelNo\",\"memberNo\":\":memberNo\",\"cardNo\":\":cardNo\"}";
 	
-	if (flag == 1) {
-		//Ğ´²Ù×÷
-		for (int i = 4; i < 6; i++) {
-			char hotelno[16];
-			//strcpy_s(hotelno, needwrite[i - 4].c_str());
-			//unsigned char *conbuf = (unsigned char *)hotelno;
-			//TODO: ×Ö·û´®ºÍÊı×éµÄ×ª»»
-			write_content(icdev, (short)i, needwrite);
-		}
-	}else{
-		//¶Á²Ù×÷
-		std::cout << "------------------------¶ÁÊı¾İ²Ù×÷-------------------------" << icdev << "\r\n";
-		for (int i = 4; i < 6; i++) {
-			unsigned char data[16];
-			read_content(icdev, (short)i, data);
-			
-			strcat((char *)needwrite, (char *)data);
-
-		}
+	
+	
+	//è¯»æ“ä½œï¼Œè¯»å–ç¬¬4ï¼Œ5ï¼Œ6å—æ•°æ®
+	std::cout << "------------------------è¯»æ•°æ®æ“ä½œ-------------------------" << icdev << "\r\n";
+	unsigned char data1[50];
+	int ret=read_content(icdev, 4, data1);
+	if (ret != 0) {
+		strcat((char *)needwrite, (char *)data1);
+		return -1;
 	}
-	
 
-	Sleep(100); //Í£Áô100ºÀÃë 
+	StringUtil::string_replaceAll(backjson, ":hotelNo", (char *)data1);
 
-	rf_halt(icdev); //½áÊø¿¨µÄ²Ù×÷
-	std::cout << "------------------------½áÊø¿¨µÄ²Ù×÷-------------------------" << icdev << "\r\n";
+	unsigned char data2[50];
+	ret = read_content(icdev, 5, data2);
+	if (ret != 0) {
+		strcat((char *)needwrite, (char *)data2);
+		return -1;
+	}
+	StringUtil::string_replaceAll(backjson, ":memberNo", (char *)data2);
+
+	unsigned char data3[50];
+	ret = read_content(icdev, 6, data3);
+	if (ret != 0) {
+		strcat((char *)needwrite, (char *)data3);
+		return -1;
+	}
+	StringUtil::string_replaceAll(backjson, ":cardNo", (char *)data3);
+
+	strcpy((char*)needwrite, backjson.c_str());//è¿”å›çš„
+
+	Sleep(100); //åœç•™100è±ªç§’ 
+
+	rf_halt(icdev); //ç»“æŸå¡çš„æ“ä½œ
+	std::cout << "------------------------ç»“æŸå¡çš„æ“ä½œ-------------------------" << icdev << "\r\n";
 
 
-	// ¶Ë¿Ú¶Á¿¨Æ÷Ó²¼şºÍPCµÄÁ´½Ó
+	// ç«¯å£è¯»å¡å™¨ç¡¬ä»¶å’ŒPCçš„é“¾æ¥
 	//st = rf_exit((HANDLE)icdev);
 	
 	return 0;
@@ -121,12 +237,13 @@ int MemberCardReader::excuteReadWriteAction(unsigned char *needwrite,int flag )
 
 int MemberCardReader::read_content(HANDLE icdev, unsigned char adr, unsigned char * data)
 {
-	//¶ÁÈ¡
+	//è¯»å–
 	int flag;
 	//unsigned char data[16];
-	flag = rf_read(icdev, adr, data);  //¶ÁM1¿¨¿é0µÄÊı¾İ
+	flag = rf_read(icdev, adr, data);  //è¯»M1å¡å—0çš„æ•°æ®
 	if (flag != 0) {
 		std::cout << "Read error:" << flag << data << "\r\n";
+		strcat((char *)data, adr + "æ•°æ®å—è¯»å–å¤±è´¥" + flag);
 		return -1;
 	}
 	std::cout << "Read the data from block: " << int(adr) << " " << data << "\r\n";
@@ -136,14 +253,15 @@ int MemberCardReader::read_content(HANDLE icdev, unsigned char adr, unsigned cha
 
 int MemberCardReader::write_content(HANDLE icdev, unsigned char adr, unsigned char * data)
 {
-	//Ğ´Èë
+	//å†™å…¥
 	int flag;
 	flag = rf_write(icdev, adr, data);
 	if (flag != 0) {
 		std::cout << "Card write error:" << flag << data << "\r\n";
+		strcat((char *)data, adr+"æ•°æ®å—å†™å…¥å¤±è´¥"+flag);
 		return -1;
 	}
-	std::cout << "Ğ´Èë³É¹¦,Write the data into block: " << int(adr) << "\r\n";
+	std::cout << "å†™å…¥æˆåŠŸ,Write the data into block: " << int(adr) << "\r\n";
 
 	return 0;
 }

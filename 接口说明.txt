@@ -10,15 +10,16 @@
    请求参数：无
     请求地址：http://192.168.10.107:9020/readMCard
     返回结果：
-     {"hotelNo":"H201810000012","memberNo":"20181000000001"}
+     {"hotelNo":"H201810000012","memberNo":"20181000000001","cardNo":"30089000"}
 
 3.MW会员卡写入数据接口
-
+   请注意，每个字段（如酒店编码）数据长度不能多于16个字符。
   （目前不支持POST）
   	                 <tr><td>酒店编码</td><td><input name="hotelNo" ></td></tr>  必须唯一
 			<tr><td>会员编号</td><td><input name="memberNo" ></td></tr>  必须唯一
+			<tr><td>会员卡编号</td><td><input name="cardNo" ></td></tr>   
 			
-  GET请求参数：hotelNo=H201810000012&memberNo=20181000000001
+  GET请求参数：hotelNo=H201810000012&memberNo=20181000000001&cardNo=30089000
    请求地址：http://192.168.10.107:9020/writeMCard
   返回结果：
-  {"hotelNo":"H201810000012","memberNo":"20181000000001"}
+  {"hotelNo":"H201810000012","memberNo":"20181000000001","cardNo":"30089000"}

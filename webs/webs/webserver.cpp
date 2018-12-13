@@ -41,6 +41,7 @@
 #include "base64.h"
 
 #include "EncodingConverter.h"
+#include "FileReader.h"
 
 webserver::request_func webserver::request_func_=0;
 
@@ -68,7 +69,7 @@ unsigned webserver::Request(void* ptr_s) {
 
   SplitGetReq(line.substr(posStartPath), path, params);
 
-  req.status_ = "202 OK";
+  req.status_ = "200 OK";
   req.s_      = &s;
   req.path_   = path;
   req.params_ = params;
@@ -141,16 +142,21 @@ unsigned webserver::Request(void* ptr_s) {
     s.SendLine(req.status_);
 	
   }
+  //跨域访问
+  s.SendLine(std::string("Access-Control-Allow-Origin: ") + FileReader::Access_Control_Allow_Origin());
+  s.SendLine(std::string("Access-Control-Allow-Methods: ") + "POST, GET, OPTIONS, DELETE");
+  s.SendLine(std::string("Access-Control-Allow-Credentials : ") + "true");
+  s.SendLine(std::string("Access-Control-Allow-Headers: ") + "Authorization,DNT,User-Agent,Keep-Alive,Cookie,Content-Type,accept,origin,X-Requested-With");
   s.SendLine(std::string("Date: ") + asctime_remove_nl + " GMT");
-  //s.SendLine(std::string("Server: ") +serverName);
+  s.SendLine(std::string("Server: ") +serverName);
   //s.SendLine("Connection: close");
   s.SendLine("Content-Type: application/json; charset=UTF-8");
   //s.SendLine("Content-Length: " + str_str.str());//不需要限制
   s.SendLine("");
   //s.SendLine(req.answer_);
 
-  std::cout << "-------req.answer_ is-------" << req.answer_ ;
-  std::cout << "-------req.answer_ length -------" << req.answer_.length();
+  std::cout << "-------req.answer_ is-------" << req.answer_ << "\r\n";
+  std::cout << "-------req.answer_ length -------" << req.answer_.length() << "\r\n";
   std::string backresult = EncodingConverter::ToUtf8String(req.answer_);
   s.sendALL(backresult);
  

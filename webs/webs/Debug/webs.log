@@ -5,11 +5,11 @@
   stdHelpers.cpp
   Socket.cpp
   MemberCardReader.cpp
-f:\business\hardware-interface\webs\webs\membercardreader.cpp(44): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
-f:\business\hardware-interface\webs\webs\membercardreader.cpp(71): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
-f:\business\hardware-interface\webs\webs\membercardreader.cpp(95): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(47): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(82): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
 f:\business\hardware-interface\webs\webs\membercardreader.cpp(102): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
-f:\business\hardware-interface\webs\webs\membercardreader.cpp(91): warning C4101: 'hotelno': unreferenced local variable
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(141): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
+f:\business\hardware-interface\webs\webs\membercardreader.cpp(175): warning C4244: 'argument': conversion from 'short' to 'unsigned char', possible loss of data
   IDCardReader.cpp
   base64.cpp
 f:\business\hardware-interface\webs\webs\base64.cpp(99): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
